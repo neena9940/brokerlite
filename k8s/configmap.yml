@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: brokerlite-config
+  namespace: brokerlite
+data:
+  DATABASE_URL: "postgresql+psycopg://broker:broker@postgres:5432/brokerlite_portfolio"
+  REDIS_URL: "redis://redis:6379/0"
+  MARKET_SERVICE_URL: "http://market:8001"

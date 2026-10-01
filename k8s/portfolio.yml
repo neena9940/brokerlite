@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio
+  namespace: brokerlite
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: portfolio
+  template:
+    metadata:
+      labels:
+        app: portfolio
+    spec:
+      containers:
+      - name: portfolio
+        image: neena9940/brokerlite-portfolio:latest
+        ports:
+        - containerPort: 8002
+        envFrom:
+        - configMapRef:
+            name: brokerlite-config
+        - secretRef:
+            name: brokerlite-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: portfolio
+  namespace: brokerlite
+spec:
+  type: LoadBalancer  # Expose this to the internet
+  ports:
+  - port: 80
+    targetPort: 8002
+  selector:
+    app: portfolio

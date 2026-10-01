@@ -50,6 +50,16 @@ services:
       REDIS_URL: redis://redis:6379/0
     depends_on:
       - redis
+  # 6. The AI / RAG Service
+  ai:
+    build: ./services/ai
+    ports:
+      - "8003:8003"
+    environment:
+      # CRITICAL: This tells the Docker container to talk to Ollama on your Mac
+      OLLAMA_HOST: http://host.docker.internal:11434
+    depends_on:
+      - redis
 
 volumes:
   pgdata:                          # named volume, managed by Docker

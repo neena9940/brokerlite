@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: brokerlite
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:16
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: broker
+        - name: POSTGRES_PASSWORD
+          value: broker
+        - name: POSTGRES_DB
+          value: brokerlite_portfolio
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: brokerlite
+spec:
+  ports:
+  - port: 5432
+  selector:
+    app: postgres

@@ -18,8 +18,9 @@ ROUTES = {
     "auth": settings.portfolio_url,
     "portfolio": settings.portfolio_url,
     "orders": settings.portfolio_url,
-    "market": settings.market_url
+    "market": settings.market_url,
+    "ai": "http://localhost:8003"
 }
 
 # Paths that do NOT require a JWT token
-PUBLIC_PATHS = {"/auth/register", "/auth/login", "/auth/refresh"}
+PUBLIC_PATHS = {"/auth/register", "/auth/login", "/auth/refresh", "/ai/chat"}

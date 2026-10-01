@@ -1,0 +1,24 @@
+[project]
+name = "brokerlite-ai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "chromadb>=1.5.9",
+    "fastapi>=0.142.2",
+    "langchain>=1.4.3",
+    "langchain-chroma>=1.1.0",
+    "langchain-core>=1.6.6",
+    "langchain-ollama>=1.1.0",
+    "langchain-text-splitters>=1.1.2",
+    "python-dotenv>=1.2.4",
+    "uvicorn>=0.54.0",
+]
+
+[project.scripts]
+brokerlite-ai = "brokerlite_ai:main"
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"

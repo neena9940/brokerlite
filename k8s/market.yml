@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: market
+  namespace: brokerlite
+spec:
+  replicas: 2  # Run 2 copies for high availability!
+  selector:
+    matchLabels:
+      app: market
+  template:
+    metadata:
+      labels:
+        app: market
+    spec:
+      containers:
+      - name: market
+        image: neena9940/brokerlite-market:latest # Replace with your actual Docker Hub username/image
+        ports:
+        - containerPort: 8001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: market
+  namespace: brokerlite
+spec:
+  ports:
+  - port: 8001
+    targetPort: 8001
+  selector:
+    app: market

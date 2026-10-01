@@ -49,14 +49,14 @@ async def proxy(segment: str, full_path: str, request: Request):
 
     # 3. Security checks (skip for public paths like /auth/login)
     user_id = None
-    if full_url_path not in PUBLIC_PATHS:
+    if request.url.path not in PUBLIC_PATHS:
         user_id = authenticate(request)  # Fails fast with 401 if invalid
         rate_limit(user_id)  # Fails fast with 429 if over limit
 
     # 4. Forward the request to the backend service
     body = await request.body()  # Capture the raw JSON body
 
-    async with httpx.AsyncClient(timeout=10.0) as client:
+    async with httpx.AsyncClient(timeout=30.0) as client:
         # Forward the request, stripping the "segment" from the URL
         # e.g., Gateway receives /market/prices/AAPL -> forwards to http://localhost:8001/prices/AAPL
         upstream_response = await client.request(
