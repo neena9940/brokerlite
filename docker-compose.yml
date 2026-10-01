@@ -1,0 +1,55 @@
+
+services:
+  # 1. The Database
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: broker
+      POSTGRES_PASSWORD: broker
+      POSTGRES_DB: brokerlite_portfolio
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # 2. The Cache & Message Broker
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  # 3. The Market Service
+  market:
+    build: ./services/market
+    ports:
+      - "8001:8001"
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - redis
+
+  # 4. The Portfolio Service
+  portfolio:
+    build: ./services/portfolio
+    ports:
+      - "8002:8002"
+    environment:
+      DATABASE_URL: postgresql+psycopg://broker:broker@postgres:5432/brokerlite_portfolio
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: dev-only-secret-change-me
+      MARKET_SERVICE_URL: http://market:8001
+    depends_on:
+      - postgres
+      - redis
+      - market
+
+  # 5. The Notifications Service
+  notifications:
+    build: ./services/notifications
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - redis
+
+volumes:
+  pgdata:                          # named volume, managed by Docker

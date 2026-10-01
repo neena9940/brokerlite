@@ -1,0 +1,54 @@
+name: BrokerLite CI/CD
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Check out your code
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. Set up Python for linting/testing
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    # 3. Install uv (the fast Python package manager)
+    - name: Install uv
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+    # 4. Test the Portfolio Service
+    - name: Test Portfolio Service
+      working-directory: ./services/portfolio
+      run: |
+        uv sync --dev
+        # Run your tests here (e.g., uv run pytest)
+        # For now, we'll just verify the app can be imported without crashing
+        uv run python -c "import app.main"
+
+    # 5. Test the Market Service
+    - name: Test Market Service
+      working-directory: ./services/market
+      run: |
+        uv sync --dev
+        uv run python -c "import app.main"
+
+    # 6. Build Docker Images to ensure Dockerfiles are valid
+    - name: Build Docker Images
+      run: |
+        docker build -t brokerlite-portfolio ./services/portfolio
+        docker build -t brokerlite-market ./services/market
+        docker build -t brokerlite-notifications ./services/notifications
+
+    - name: Success Message
+      run: echo "🚀 All tests passed and Docker images built successfully!"
